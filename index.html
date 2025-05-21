@@ -10,6 +10,8 @@
     table, th, td { border: 1px solid black; padding: 8px; text-align: left; }
     #resultado { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; background: #f9f9f9; }
     .confirmacao { font-weight: bold; color: green; margin-top: 5px; }
+    button { cursor: pointer; }
+    .excluir { color: red; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -33,6 +35,7 @@
       <th>QRA</th>
       <th>Posto/Graduação</th>
       <th>Telefone</th>
+      <th>Excluir</th>
     </tr>
   </thead>
   <tbody id="corpoTabela"></tbody>
@@ -52,6 +55,7 @@
       <th>QRA</th>
       <th>Posto/Graduação</th>
       <th>Telefone</th>
+      <th>Excluir</th>
     </tr>
   </thead>
   <tbody id="corpoExtra"></tbody>
@@ -74,6 +78,7 @@
       <th>QRA</th>
       <th>Posto/Graduação</th>
       <th>Telefone</th>
+      <th>Excluir</th>
     </tr>
   </thead>
   <tbody id="corpoRural"></tbody>
@@ -172,7 +177,14 @@ function adicionarPolicial() {
   const nome = document.getElementById("selecaoNome").value;
   if (!nome) return;
   const p = policiais.find(pol => pol.nome === nome);
-  const linha = `<tr><td>${p.nome}</td><td>${p.qra}</td><td>${p.posto}</td><td>${p.telefone}</td></tr>`;
+  const linha = `
+    <tr>
+      <td>${p.nome}</td>
+      <td>${p.qra}</td>
+      <td>${p.posto}</td>
+      <td>${p.telefone}</td>
+      <td><button class="excluir" onclick="excluirPolicial(this, 'corpoTabela')">Excluir</button></td>
+    </tr>`;
   document.getElementById("corpoTabela").innerHTML += linha;
 }
 
@@ -180,7 +192,14 @@ function adicionarPolicialExtra() {
   const nome = document.getElementById("selecaoExtra").value;
   if (!nome) return;
   const p = policiais.find(pol => pol.nome === nome);
-  const linha = `<tr><td>${p.nome}</td><td>${p.qra}</td><td>${p.posto}</td><td>${p.telefone}</td></tr>`;
+  const linha = `
+    <tr>
+      <td>${p.nome}</td>
+      <td>${p.qra}</td>
+      <td>${p.posto}</td>
+      <td>${p.telefone}</td>
+      <td><button class="excluir" onclick="excluirPolicial(this, 'corpoExtra')">Excluir</button></td>
+    </tr>`;
   document.getElementById("corpoExtra").innerHTML += linha;
 }
 
@@ -188,8 +207,19 @@ function adicionarPolicialRural() {
   const nome = document.getElementById("selecaoRural").value;
   if (!nome) return;
   const p = policiais.find(pol => pol.nome === nome);
-  const linha = `<tr><td>${p.nome}</td><td>${p.qra}</td><td>${p.posto}</td><td>${p.telefone}</td></tr>`;
+  const linha = `
+    <tr>
+      <td>${p.nome}</td>
+      <td>${p.qra}</td>
+      <td>${p.posto}</td>
+      <td>${p.telefone}</td>
+      <td><button class="excluir" onclick="excluirPolicial(this, 'corpoRural')">Excluir</button></td>
+    </tr>`;
   document.getElementById("corpoRural").innerHTML += linha;
+}
+
+function excluirPolicial(botao, corpoTabelaId) {
+  botao.closest('tr').remove();
 }
 
 function gerarRelatorio() {
@@ -233,7 +263,7 @@ Turno ${turno}
 CMTE DA UPM: ${comandante}
 
 __VTR 01 SPC-7C90__
-Graduado de Dia
+*Graduado de Dia*
 
 ${equipeTexto}
 
