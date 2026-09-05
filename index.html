@@ -300,7 +300,7 @@ function gerarTextoAtividades() {
     bloco.querySelectorAll(".corpoAtividade tr").forEach(linha => {
       const c = linha.querySelectorAll("td");
       if (c.length >= 4) {
-        nomes += `${c[0].textContent}\n${c[3].textContent}\n`;
+        nomes += `\n\n${c[0].textContent}\n${c[3].textContent}\n`;
       }
     });
 
