@@ -72,33 +72,9 @@
 <label>Fim:</label>
 <input type="time" id="extraFim">
 
-<h3>Patrulhamento Rural</h3>
-<table id="tabelaRural">
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>QRA</th>
-      <th>Posto/Graduação</th>
-      <th>Telefone</th>
-      <th>Excluir</th>
-    </tr>
-  </thead>
-  <tbody id="corpoRural"></tbody>
-</table>
-<label>Adicionar Policial:</label>
-<select id="selecaoRural">
-  <option value="">Selecione um policial</option>
-</select>
-<br>
-<button onclick="adicionarPolicialRural()">Adicionar à Rural</button>
-<label>Data de Início:</label>
-<input type="date" id="ruralDataInicio">
-<label>Hora de Início:</label>
-<input type="time" id="ruralHoraInicio">
-<label>Data de Fim:</label>
-<input type="date" id="ruralDataFim">
-<label>Hora de Fim:</label>
-<input type="time" id="ruralHoraFim">
+<h3>Atividades Operacionais</h3>
+<div id="atividadesContainer"></div>
+<button type="button" onclick="adicionarAtividade()">➕ Adicionar Atividade</button>
 
 <h3>Linhas:</h3>
 <input type="text" id="linhas" value="190, 981700447">
@@ -132,6 +108,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   popularSelect();
   popularSelectExtraRural();
+  adicionarAtividade();
 });
 
 const policiais = [
@@ -162,19 +139,16 @@ function popularSelect() {
 
 function popularSelectExtraRural() {
   const selectExtra = document.getElementById("selecaoExtra");
-  const selectRural = document.getElementById("selecaoRural");
 
-  policiais.forEach(p => {
-    const opt1 = document.createElement("option");
-    opt1.value = p.nome;
-    opt1.textContent = p.nome;
-    selectExtra.appendChild(opt1);
-
-    const opt2 = document.createElement("option");
-    opt2.value = p.nome;
-    opt2.textContent = p.nome;
-    selectRural.appendChild(opt2);
-  });
+  if (selectExtra) {
+    selectExtra.innerHTML = '<option value="">Selecione um policial</option>';
+    policiais.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p.nome;
+      opt.textContent = p.nome;
+      selectExtra.appendChild(opt);
+    });
+  }
 }
 
 function adicionarPolicial() {
@@ -226,6 +200,115 @@ function excluirPolicial(botao, corpoTabelaId) {
   botao.closest('tr').remove();
 }
 
+
+let contadorAtividades = 0;
+
+function adicionarAtividade() {
+  contadorAtividades++;
+  const id = contadorAtividades;
+
+  const div = document.createElement("div");
+  div.className = "blocoAtividade";
+  div.style.border = "1px solid #999";
+  div.style.padding = "12px";
+  div.style.margin = "15px 0";
+
+  div.innerHTML = `
+    <strong>Atividade ${id}</strong>
+    <button type="button" onclick="this.closest('.blocoAtividade').remove()">🗑️ Remover</button>
+
+    <label>Tipo de Atividade:</label>
+    <select class="tipoAtividade">
+      <option value="Patrulhamento Rural">Patrulhamento Rural</option>
+      <option value="Diária">Diária</option>
+      <option value="Protetor de Divisa">Protetor de Divisa</option>
+      <option value="Curso">Curso</option>
+    </select>
+
+    <table>
+      <thead><tr>
+        <th>Nome</th><th>QRA</th><th>Posto/Graduação</th><th>Telefone</th><th>Excluir</th>
+      </tr></thead>
+      <tbody class="corpoAtividade"></tbody>
+    </table>
+
+    <label>Adicionar Policial:</label>
+    <select class="selecaoAtividade">
+      <option value="">Selecione um policial</option>
+    </select>
+    <button type="button" onclick="adicionarPolicialAtividade(this)">Adicionar à Atividade</button>
+
+    <label>Data de Início:</label>
+    <input type="date" class="atividadeDataInicio">
+    <label>Hora de Início:</label>
+    <input type="time" class="atividadeHoraInicio">
+    <label>Data de Fim:</label>
+    <input type="date" class="atividadeDataFim">
+    <label>Hora de Fim:</label>
+    <input type="time" class="atividadeHoraFim">
+    <br>
+    <br>
+  `;
+
+  document.getElementById("atividadesContainer").appendChild(div);
+
+  const select = div.querySelector(".selecaoAtividade");
+  policiais.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.nome;
+    opt.textContent = p.nome;
+    select.appendChild(opt);
+  });
+}
+
+function adicionarPolicialAtividade(botao) {
+  const bloco = botao.closest(".blocoAtividade");
+  const select = bloco.querySelector(".selecaoAtividade");
+  const nome = select.value;
+  if (!nome) return;
+
+  const p = policiais.find(pol => pol.nome === nome);
+  const linha = document.createElement("tr");
+
+  linha.innerHTML = `
+    <td>${p.nome}</td>
+    <td>${p.qra}</td>
+    <td>${p.posto}</td>
+    <td>${p.telefone}</td>
+    <td><button type="button">Excluir</button></td>
+  `;
+
+  linha.querySelector("button").onclick = () => linha.remove();
+  bloco.querySelector(".corpoAtividade").appendChild(linha);
+  select.value = "";
+}
+
+function formatarDataAtividade(valor) {
+  return valor ? new Date(valor + "T00:00:00").toLocaleDateString("pt-BR") : "";
+}
+
+function gerarTextoAtividades() {
+  const blocos = document.querySelectorAll(".blocoAtividade");
+  const partes = [];
+
+  blocos.forEach(bloco => {
+    const tipo = bloco.querySelector(".tipoAtividade").value;
+    const inicio = formatarDataAtividade(bloco.querySelector(".atividadeDataInicio").value);
+    const fim = formatarDataAtividade(bloco.querySelector(".atividadeDataFim").value);
+
+    let nomes = "";
+    bloco.querySelectorAll(".corpoAtividade tr").forEach(linha => {
+      const c = linha.querySelectorAll("td");
+      if (c.length >= 4) {
+        nomes += `${c[0].textContent}\n${c[3].textContent}\n`;
+      }
+    });
+
+    partes.push(`${tipo}: ${inicio} A ${fim}\n${nomes.trim()}`);
+  });
+
+  return partes.join("\n\n");
+}
 function gerarRelatorio() {
   const data = document.getElementById("data").value;
   const turno = document.getElementById("turno").value;
@@ -248,15 +331,9 @@ function gerarRelatorio() {
 
   const equipeTexto = extrairTextoTabela("corpoTabela");
   const extraTexto = extrairTextoTabela("corpoExtra");
-  const ruralTexto = extrairTextoTabela("corpoRural");
 
   const extraInicio = document.getElementById("extraInicio").value;
   const extraFim = document.getElementById("extraFim").value;
-
-  const ruralDataInicio = document.getElementById("ruralDataInicio").value;
-  const ruralHoraInicio = document.getElementById("ruralHoraInicio").value;
-  const ruralDataFim = document.getElementById("ruralDataFim").value;
-  const ruralHoraFim = document.getElementById("ruralHoraFim").value;
 
   const textoFinal = `*NPM DENISE*
 Data: ${new Date(data).toLocaleDateString("pt-BR")} (${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)})
@@ -273,11 +350,7 @@ ${equipeTexto}
 
 Jornada Extraordinária das ${extraInicio} às ${extraFim}
 ${extraTexto}
-
-Patrulhamento Rural:
-${ruralTexto}
-De ${new Date(ruralDataInicio).toLocaleDateString("pt-BR")} ${ruralHoraInicio}
-até ${new Date(ruralDataFim).toLocaleDateString("pt-BR")} ${ruralHoraFim}
+  ${gerarTextoAtividades()}
 
 Linhas: ${linhas}
 
