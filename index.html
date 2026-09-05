@@ -307,7 +307,7 @@ function gerarTextoAtividades() {
     partes.push(`${tipo}: ${inicio} A ${fim}\n${nomes.trim()}`);
   });
 
-  return partes.join("\n\n");
+  return partes.join("\n\n--------------------\n\n");
 }
 function gerarRelatorio() {
   const data = document.getElementById("data").value;
