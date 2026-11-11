@@ -79,6 +79,14 @@
 <h3>Linhas:</h3>
 <input type="text" id="linhas" value="190, 981700447">
 
+<h3>Operação:</h3>
+<textarea id="operacao" rows="3">*OPERAÇÃO TOLERÂNCIA ZERO ÀS FACÇÕES CRIMINOSAS*</textarea>
+
+<h3>Cartão Programa</h3>
+<textarea id="cartao" rows="5">
+ZONA URBANA: Patrulhamento central - Área comercial e bancária, BAIRROS: Angelito Barbosa, Boa Esperança, Recanto dos Pássaros e patrulhamento nos bairros adjacentes.
+ZONA RURAL: Patrulhamento Rural, rondas e visitas técnicas.
+</textarea>
 
 <br>
 <button onclick="gerarRelatorio()">Gerar Relatório</button>
@@ -306,6 +314,8 @@ function gerarRelatorio() {
   const turno = document.getElementById("turno").value;
   const comandante = document.getElementById("comandante").value;
   const linhas = document.getElementById("linhas").value;
+  const operacao = document.getElementById("operacao").value;
+  const cartao = document.getElementById("cartao").value;
   const diaSemana = new Date(data).toLocaleDateString("pt-BR", { weekday: "long" });
 
   function extrairTextoTabela(id) {
@@ -347,10 +357,12 @@ ${extraTexto}
 
 Linhas: ${linhas}
 
-
+${operacao}
 
 --------------------------------------
+CARTÃO PROGRAMA
 
+${cartao}
 
 *POLICIA MILITAR, SERVINDO E PROTEGENDO*`;
 
